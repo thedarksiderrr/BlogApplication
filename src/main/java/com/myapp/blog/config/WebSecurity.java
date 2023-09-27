@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,10 +20,11 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+
 @Configuration
 @EnableWebSecurity
 @EnableWebMvc
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true) //method level security (role specified)
 public class WebSecurity {
 
     public static final String[] PUBLIC_URLS = {
@@ -62,6 +64,7 @@ public class WebSecurity {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.authenticationProvider(daoAuthenticationProvider());
         return http.build();
     }
 
@@ -77,8 +80,17 @@ public class WebSecurity {
         return auth.getAuthenticationManager();
     }
 
-}
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
 
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(customUserDetailService);
+        provider.setPasswordEncoder(passwordEncoder());
+
+        return provider;
+    }
+
+}
 
 //-----------------------------------------------------------------------------
 //    @Bean
@@ -87,15 +99,7 @@ public class WebSecurity {
 //        return new CustomUserDetailService();
 //    }
 //
-//    @Bean
-//    public DaoAuthenticationProvider authenticationProvider() {
-//
-//        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-//        daoAuthenticationProvider.setUserDetailsService(this.getUserDetailService());
-//        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
-//
-//        return daoAuthenticationProvider;
-//    }
+
 //
 //    // configure method
 //    @Bean

@@ -35,6 +35,7 @@ com\myapp\blog\DTO\CategoryDTO.class
 com\myapp\blog\DTO\response\ApiResponse.class
 com\myapp\blog\entity\Post.class
 com\myapp\blog\BlogApplication.class
+com\myapp\blog\config\SwaggerConfig.class
 com\myapp\blog\config\AppConstants.class
 com\myapp\blog\repository\CommentRepository.class
 com\myapp\blog\DTO\JwtAuthRequest.class
